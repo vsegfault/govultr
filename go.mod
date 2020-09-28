@@ -1,4 +1,4 @@
-module github.com/vultr/govultr
+module github.com/vsegfault/govultr
 
 go 1.12
 

@@ -8,6 +8,21 @@ import (
 	"strconv"
 )
 
+// IPV6Wrapper Wrapper for IPV6 data type
+// Vultr have bug in api, if balancer is in pending state, return type is bool not string
+type IPV6Wrapper string
+
+// UnmarshalJSON Wrapper for IPV6 data type
+// Vultr have bug in api, if balancer is in pending state, return type is bool not string
+func (w *IPV6Wrapper) UnmarshalJSON(data []byte) (err error) {
+	if string(data) == "false" {
+		*w = IPV6Wrapper("")
+	} else {
+		*w = IPV6Wrapper(string(data))
+	}
+	return nil
+}
+
 // LoadBalancerService is the interface to interact with the server endpoints on the Vultr API
 // Link: https://www.vultr.com/api/#loadbalancer
 type LoadBalancerService interface {
@@ -40,14 +55,14 @@ type LoadBalancerHandler struct {
 
 // LoadBalancers represent a basic structure of a load balancer
 type LoadBalancers struct {
-	ID          int    `json:"SUBID,omitempty"`
-	DateCreated string `json:"date_created,omitempty"`
-	RegionID    int    `json:"DCID,omitempty"`
-	Location    string `json:"location,omitempty"`
-	Label       string `json:"label,omitempty"`
-	Status      string `json:"status,omitempty"`
-	IPV4        string `json:"ipv4,omitempty"`
-	IPV6        string `json:"ipv6,omitempty"`
+	ID          int         `json:"SUBID,omitempty"`
+	DateCreated string      `json:"date_created,omitempty"`
+	RegionID    int         `json:"DCID,omitempty"`
+	Location    string      `json:"location,omitempty"`
+	Label       string      `json:"label,omitempty"`
+	Status      string      `json:"status,omitempty"`
+	IPV4        string      `json:"ipv4,omitempty"`
+	IPV6        IPV6Wrapper `json:"ipv6,omitempty"`
 }
 
 // InstanceList represents instances that attached to your load balancer
